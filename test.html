@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>panier</title>
+    <link rel="stylesheet" href="css/panier.css">
+</head>
+<body>
+    <nav>
+        <h1>&#9776MENU</h1>
+        <div class="buttonDiv">
+            <a href="menu.html"><button class="produit">Produit</button></a>
+            <a href="panier.html"><button class="panier">Panier <span class="panierNum"></span></button></a>
+        </div>
+    </nav>  
+    <div class="menuHolder">
+        <div class="card">
+            <img src="images/caffeCup.png" >
+            
+            <div class="cardCentre">
+                <p class="cardName">caffe</p>
+                <div class="quantityDiv">
+                <button class="arrowQ"><</button><span class="quantite">1</span><button class="arrowQ">></button>
+            </div>
+            </div>
+            
+            <div class="cardBottom">
+                <p class="cardPrice">$5.20</p>
+                <button class="delete" data-produit-nom= "${produit.name}">X</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

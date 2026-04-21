@@ -1,21 +1,12 @@
-const db = require('../Back-End/config/db');
+const db = require('../config/db'); // Retour en arrière d'un dossier (..) puis config
 
-exports.getProduitsDisponibles = async (req, res) => {
+// Récupérer tous les produits
+exports.getAllProduits = async (req, res) => {
     try {
-        const [lignes] = await db.query(
-            `SELECT p.id, p.nom, p.description, p.prix, p.image_url, c.nom AS categorie 
-             FROM Produits p 
-             JOIN Categories c ON p.categorie_id = c.id 
-             WHERE p.est_disponible = TRUE`
-        );
-
-        res.status(200).json({
-            success: true,
-            compte: lignes.length,
-            data: lignes
-        });
+        const [produits] = await db.query('SELECT * FROM Produits');
+        res.status(200).json({ success: true, data: produits });
     } catch (error) {
-        console.error("Erreur :", error);
+        console.error("Erreur :", error.message);
         res.status(500).json({ success: false, message: "Erreur serveur." });
     }
 };

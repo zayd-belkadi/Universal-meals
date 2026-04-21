@@ -1,27 +1,27 @@
 const express = require('express');
 require('dotenv').config();
-const db = require('./Back-End/config/db'); // Connexion à ta base de données XAMPP
+const db = require('./config/db'); // Le bon chemin vers la DB
 
 const app = express();
 const PORT = 3001;
 
-// Middleware pour lire le JSON
+// Middleware pour lire le JSON envoyé par le frontend
 app.use(express.json());
 
-// Importation et utilisation de tes routes
+// Importation des routes
 const produitRoutes = require('./routes/produitRoutes');
-app.use('/api/produits', produitRoutes);
-
-// Importation et utilisation des routes de commandes
 const commandeRoutes = require('./routes/commandeRoutes');
+
+// Utilisation des routes
+app.use('/api/produits', produitRoutes);
 app.use('/api/commandes', commandeRoutes);
 
-// Route de test simple (optionnelle)
+// Route de test
 app.get('/', (req, res) => {
     res.send("Bienvenue sur l'API de Universal Meals !");
 });
 
-// Lancement du serveur (C'est cette partie qui maintient le terminal actif !)
+// Lancement du serveur
 app.listen(PORT, () => {
     console.log(`🚀 Serveur démarré avec succès sur http://localhost:${PORT}`);
 });

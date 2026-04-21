@@ -65,3 +65,37 @@ exports.getToutesLesCommandes = async (req, res) => {
         res.status(500).json({ success: false, message: "Erreur serveur." });
     }
 };
+// 3. Fonction pour mettre à jour le statut d'une commande (Cuisine)
+exports.mettreAJourStatut = async (req, res) => {
+    // On récupère l'ID de la commande dans l'URL (ex: /api/commandes/1/statut)
+    const { id } = req.params; 
+    // On récupère le nouveau statut envoyé dans le corps de la requête
+    const { statut } = req.body;
+
+    // Vérification de sécurité : on s'assure qu'un statut a bien été envoyé
+    if (!statut) {
+        return res.status(400).json({ success: false, message: "Le nouveau statut est requis." });
+    }
+
+    try {
+        // Mise à jour dans la base de données
+        const [resultat] = await db.query(
+            'UPDATE Commandes SET statut = ? WHERE id = ?',
+            [statut, id]
+        );
+
+        // Si aucune ligne n'a été modifiée, c'est que l'ID n'existe pas
+        if (resultat.affectedRows === 0) {
+            return res.status(404).json({ success: false, message: "Commande introuvable." });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: `Le statut de la commande n°${id} est passé à '${statut}'.`
+        });
+
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour du statut :", error.message);
+        res.status(500).json({ success: false, message: "Erreur serveur." });
+    }
+};

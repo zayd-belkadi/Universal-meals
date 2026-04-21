@@ -99,3 +99,67 @@ exports.mettreAJourStatut = async (req, res) => {
         res.status(500).json({ success: false, message: "Erreur serveur." });
     }
 };
+// 4. Fonction pour récupérer l'historique d'un client spécifique
+exports.getCommandesUtilisateur = async (req, res) => {
+    // On récupère l'ID de l'utilisateur passé dans l'URL
+    const { utilisateur_id } = req.params;
+
+    try {
+        // On sélectionne uniquement les commandes de ce client précis
+        const [commandes] = await db.query(`
+            SELECT id, montant_total, statut, creneau_retrait, date_commande
+            FROM Commandes
+            WHERE utilisateur_id = ?
+            ORDER BY date_commande DESC
+        `, [utilisateur_id]);
+
+        res.status(200).json({
+            success: true,
+            compte: commandes.length,
+            data: commandes
+        });
+
+    } catch (error) {
+        console.error("Erreur lors de la récupération de l'historique :", error.message);
+        res.status(500).json({ success: false, message: "Erreur serveur." });
+    }
+};
+// 5. Fonction pour annuler/supprimer une commande
+exports.supprimerCommande = async (req, res) => {
+    // On récupère l'ID de la commande à supprimer
+    const { id } = req.params;
+
+    // On démarre une transaction sécurisée
+    const connection = await db.getConnection();
+    await connection.beginTransaction();
+
+    try {
+        // Étape A : Supprimer d'abord le contenu du panier (Lignes_Commande)
+        await connection.query('DELETE FROM Lignes_Commande WHERE commande_id = ?', [id]);
+
+        // Étape B : Supprimer ensuite la commande principale
+        const [resultat] = await connection.query('DELETE FROM Commandes WHERE id = ?', [id]);
+
+        // Si aucune ligne n'a été touchée, c'est que l'ID n'existait pas
+        if (resultat.affectedRows === 0) {
+            await connection.rollback(); // On annule tout
+            return res.status(404).json({ success: false, message: "Commande introuvable." });
+        }
+
+        // Si tout s'est bien passé, on valide la suppression !
+        await connection.commit();
+        res.status(200).json({ 
+            success: true, 
+            message: `La commande n°${id} a été annulée et supprimée avec succès.` 
+        });
+
+    } catch (error) {
+        // En cas de problème, on annule l'opération pour ne rien casser
+        await connection.rollback();
+        console.error("Erreur lors de la suppression :", error.message);
+        res.status(500).json({ success: false, message: "Erreur serveur lors de l'annulation." });
+    } finally {
+        // On libère la connexion
+        connection.release();
+    }
+};

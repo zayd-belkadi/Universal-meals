@@ -1,4 +1,4 @@
-const db = require('../config/db');
+const db = require('../Back-End/config/db');
 
 // Fonction pour créer une nouvelle commande
 exports.creerCommande = async (req, res) => {

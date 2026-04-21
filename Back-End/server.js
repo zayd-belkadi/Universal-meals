@@ -1,6 +1,6 @@
 const express = require('express');
 require('dotenv').config();
-const db = require('./config/db'); // Connexion à ta base de données XAMPP
+const db = require('./Back-End/config/db'); // Connexion à ta base de données XAMPP
 
 const app = express();
 const PORT = 3001;

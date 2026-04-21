@@ -1,4 +1,4 @@
-const db = require('../config/db');
+const db = require('../Back-End/config/db');
 
 exports.getProduitsDisponibles = async (req, res) => {
     try {

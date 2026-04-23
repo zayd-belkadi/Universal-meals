@@ -44,3 +44,55 @@ exports.creerProduit = async (req, res) => {
         res.status(500).json({ success: false, message: "Erreur serveur lors de l'ajout du produit." });
     }
 };
+// 3. Fonction pour modifier toutes les infos d'un plat (Option A)
+exports.mettreAJourProduit = async (req, res) => {
+    const { id } = req.params;
+    const { nom, description, prix, image } = req.body;
+
+    try {
+        const [resultat] = await db.query(
+            'UPDATE Produits SET nom = ?, description = ?, prix = ?, image = ? WHERE id = ?',
+            [nom, description, prix, image, id]
+        );
+
+        if (resultat.affectedRows === 0) {
+            return res.status(404).json({ success: false, message: "Produit introuvable." });
+        }
+
+        res.status(200).json({ success: true, message: "Le plat a été modifié avec succès !" });
+
+    } catch (error) {
+        console.error("Erreur lors de la modification :", error.message);
+        res.status(500).json({ success: false, message: "Erreur serveur." });
+    }
+};
+
+// 4. Fonction pour activer/désactiver rapidement un plat (Option B)
+exports.changerDisponibilite = async (req, res) => {
+    const { id } = req.params;
+    const { est_disponible } = req.body;
+
+    // On vérifie que la valeur est bien envoyée (true ou false)
+    if (est_disponible === undefined) {
+        return res.status(400).json({ success: false, message: "Le champ 'est_disponible' est requis." });
+    }
+
+    try {
+        const [resultat] = await db.query(
+            'UPDATE Produits SET est_disponible = ? WHERE id = ?',
+            [est_disponible, id]
+        );
+
+        if (resultat.affectedRows === 0) {
+            return res.status(404).json({ success: false, message: "Produit introuvable." });
+        }
+
+        // Petit texte sympa pour dire si c'est activé ou désactivé
+        const statut = est_disponible ? "disponible" : "en rupture de stock";
+        res.status(200).json({ success: true, message: `Le plat est maintenant ${statut} !` });
+
+    } catch (error) {
+        console.error("Erreur de disponibilité :", error.message);
+        res.status(500).json({ success: false, message: "Erreur serveur." });
+    }
+};

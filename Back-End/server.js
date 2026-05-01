@@ -12,11 +12,13 @@ app.use(express.json());
 const produitRoutes = require('./routes/produitRoutes');
 const commandeRoutes = require('./routes/commandeRoutes');
 const utilisateurRoutes = require('./routes/utilisateurRoutes');
+const categorieRoutes = require('./routes/categorieRoutes');
 
 // Utilisation des routes
 app.use('/api/produits', produitRoutes);
 app.use('/api/commandes', commandeRoutes);
 app.use('/api/utilisateurs', utilisateurRoutes);
+app.use('/api/categories', categorieRoutes);
 
 // Route de test
 app.get('/', (req, res) => {

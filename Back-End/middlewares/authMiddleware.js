@@ -35,3 +35,12 @@ exports.estAdmin = (req, res, next) => {
     
     next(); // C'est un Admin, on le laisse passer !
 };
+
+// 3. Le Vigile Staff : Vérifie si l'utilisateur est Employé OU Admin
+exports.estEmployeOuAdmin = (req, res, next) => {
+    const role = req.utilisateur.role;
+    if (role !== 'Admin' && role !== 'Employe') {
+        return res.status(403).json({ success: false, message: "Accès interdit. Réservé au staff." });
+    }
+    next(); // C'est un Employé ou un Admin, on laisse passer !
+};

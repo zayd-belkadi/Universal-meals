@@ -81,3 +81,14 @@ exports.connexion = async (req, res) => {
         res.status(500).json({ success: false, message: "Erreur serveur." });
     }
 };
+// 3. Fonction pour récupérer tous les utilisateurs (Pour l'Admin)
+exports.getAllUtilisateurs = async (req, res) => {
+    try {
+        // On ne sélectionne pas les mots de passe pour des raisons de sécurité !
+        const [utilisateurs] = await db.query('SELECT id, nom, email, role, date_creation FROM Utilisateurs');
+        res.status(200).json({ success: true, data: utilisateurs });
+    } catch (error) {
+        console.error("Erreur récupération utilisateurs :", error.message);
+        res.status(500).json({ success: false, message: "Erreur serveur." });
+    }
+};

@@ -13,7 +13,8 @@ router.post('/', auth.verifierToken, auth.estAdmin, produitController.creerProdu
 // Route pour modifier tout le plat (PUT)
 router.put('/:id', auth.verifierToken, auth.estAdmin, produitController.mettreAJourProduit);
 
-// Route pour changer uniquement la disponibilité (PATCH)
-router.patch('/:id/disponibilite', auth.verifierToken, auth.estAdmin, produitController.changerDisponibilite);
+
+// Route pour changer uniquement la disponibilité (PATCH) - Accessible par Admin ET Employé
+router.patch('/:id/disponibilite', auth.verifierToken, auth.estEmployeOuAdmin, produitController.changerDisponibilite);
 
 module.exports = router;

@@ -1,19 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Menu</title>
-    <link rel="stylesheet" href="css/menu.css">
+    <title>test</title>
+    <link rel="stylesheet" href="css/home.css">
 </head>
 <body>
-    <nav>
-        <h1>&#9776MENU</h1>
-        <div class="buttonDiv">
-            <a href="menu.html"><button class="produit">Produit</button></a>
-            <a href="panier.html"><button class="panier">Panier <span class="panierNum"></span></button></a>
+    <div class="gridMP">
+        <div>
+            <div class="menu">
+                <h1>MENU</h1>
+                <div class="categoryHolder">
+                </div>
+            </div>
         </div>
-    </nav>  
+        <div>
+            <div class="panier">
+                <h1>PANIER</h1>
+                <p>--------------------------------------------------------</p>
+                <div class="catProduit">
+                    <span>Produit</span>
+                    <span>Qte</span>
+                    <span>Prix</span>
+                </div> 
+                <p class="line3">--------------------------------------------------------</p>
+                <div class="itemPanier">
+                </div>
+                <p class="line4">--------------------------------------------------------</p>
+                <div>
+                <p style="margin-bottom: 5px;" class="sousTotal">Sous-Total : 0.00$</p>
+                <p class="taxes">Taxes : 0.00$</p>
+                </div>
+                
+                <p class="line5">--------------------------------------------------------</p>
+                <p class="total">TOTAL : 0.00$</p>
+                <p class="line6">--------------------------------------------------------</p>
+                <button class="commander">[COMMANDER]</button>
 
-    <div class="menuHolder"></div>
-    <script src="./scripts/menu.js" type="module"></script>
+
+            </div>
+        </div>
+    </div>
+    
+</div>
+<script src="scripts/menu.js" type="module"></script>
 </body>
 </html>

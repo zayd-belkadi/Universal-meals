@@ -1,67 +1,84 @@
-import {listMenu} from '../data/menuList.js'
-import {panierAlt} from './cart.js'
-import {panier, updatePanier} from '../data/cart.js'
-import { repete } from './repete.js';
+import {menuItems, categoryList} from '../data/menudata.js'
+import {panierItems} from '../data/panier.js'
+import {updatePanier, panierVide,calculeFrais} from './panier.js'
 
 let menuProduit = '';
+let menuCategoryItem = '';
+panierVide();
 
-function panierNum(){
-    let totalQuantite = 0;
-    panier.forEach((produit)=>{
-        totalQuantite += Number(produit.quantite)
-    })
-    document.querySelector(".panierNum").innerHTML= `(${totalQuantite})`;
+function itemWrite (item){
+    
+    menuItems.forEach((produit)=> {
+        
+    if (item == produit.category){
+        
+        let itemForm = `
+                    <p class="itemName">${produit.name} ${((produit.prix)/100).toFixed(2)}$</p>
+                    
+                    <div class="produitQuantite">
+                        <select class="optionValeur optionValeur${produit.id}">
+                        <option class="option" selected value="1">1</option>
+                        <option class="option" value="2">2</option>
+                        <option class="option" value="3">3</option>
+                        <option class="option" value="4">4</option>
+                        <option class="option" value="5">5</option>
+                        <option class="option" value="6">6</option>
+                        <option class="option" value="7">7</option>
+                        <option class="option" value="8">8</option>
+                        <option class="option" value="9">9</option>
+                        <option class="option" value="10">10</option>
+                        </select>
+                        <button class="add" data-produit-id = ${produit.id}>[+]</button>
+                    </div>
+                    <br>`;
+            menuCategoryItem += itemForm
+
+        }})
+        return menuCategoryItem;
 }
 
-listMenu.forEach((produit) => {
-    let itemForm = `
-    <div class="card">
-        <img src="${produit.image}" >
-        <div class="cardCentre">
-            <p class="cardName">${produit.name}</p>
-            
-            <div class="produitQuantite">
-                <select class="optionValeur${produit.id}">
-                <option selected value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                </select>
-            </div>
-        </div>
-        <div class="cardBottom">
-            <p class="cardPrice">$${((produit.price) / 100).toFixed(2)}</p>
-            <button class="cardBtn" data-produit-id = "${produit.id}" data-produit-nom= "${produit.name}">🛒</button>
-        </div>
-    </div>`;
 
-    menuProduit += itemForm;
+
+categoryList.forEach((item)=> {
+    let categoryForm = `
+    <div class="Category">
+        <p class="categoryName">-----${item}-----</p>
+        <div class="item">
+        ${itemWrite(item)}
+        </div>
+    </div>`
     
-    document.querySelector('.menuHolder').innerHTML = menuProduit; 
+    menuProduit += categoryForm;
+    menuCategoryItem = '';
+});
 
-})
-
-document.querySelectorAll('.cardBtn')
-    .forEach((btn) =>{
+document.querySelector('.categoryHolder').innerHTML = menuProduit; 
+document.querySelectorAll('.add').forEach((btn)=>{
         btn.addEventListener('click', () => {
-            let id = btn.dataset.produitId;
-            let quantiteValeur = document.querySelector(".optionValeur"+id).value;
-            localStorage.getItem('panier') !== null?  panierAlt ==  JSON.parse(localStorage.getItem('panier')): '';
-            panierAlt.push(
-                {   id : btn.dataset.produitId,
-                     name : btn.dataset.produitNom,
-            quantite : quantiteValeur });
-            localStorage.setItem('panier' , JSON.stringify(panierAlt));
+
+            let id = Number(btn.dataset.produitId);
+            let quantite = Number(document.querySelector(".optionValeur" + id).value);
+
+            let existItem = panierItems.find(item => item.id == id);
+
+            let select = document.querySelector(".optionValeur"+id);
+            select.value = "1";
+
+            if (existItem) {
+                existItem.quantite += quantite;
+            } else {
+                let produit = menuItems.find(p => p.id == id);
+                if (produit) {
+                    panierItems.push({
+                        id: produit.id,
+                        name: produit.name,
+                        prix: produit.prix,
+                        quantite: quantite,
+                    });
+                }
+            }
+
             updatePanier();
-            panierNum();
+            calculeFrais();
         });
     })
-
-panierNum();
-repete(panier);

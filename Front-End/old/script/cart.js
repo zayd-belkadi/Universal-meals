@@ -1,6 +1,5 @@
 import {panier, updatePanier} from '../data/cart.js'
 import {listMenu} from '../data/menuList.js'
-import {repete} from './repete.js'
 
 export let panierAlt = [];
 let panierProduit = '';

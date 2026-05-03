@@ -1,19 +1,29 @@
-import {menuItems, categoryList} from '../data/menudata.js'
 import {panierItems} from '../data/panier.js'
-import {updatePanier, panierVide,calculeFrais} from './panier.js'
+import {updatePanier, panierVide, calculeFrais} from './panier.js'
+
+// URL de base du backend
+const API = 'http://localhost:3001/api';
 
 let menuProduit = '';
 let menuCategoryItem = '';
 panierVide();
 
-function itemWrite (item){
-    
-    menuItems.forEach((produit)=> {
-        
-    if (item == produit.category){
-        
-        let itemForm = `
-                    <p class="itemName">${produit.name} ${((produit.prix)/100).toFixed(2)}$</p>
+// On garde les produits récupérés du backend pour les retrouver lors de l'ajout
+let produitsBackend = [];
+
+// Fonction qui crée le HTML pour les items d'une catégorie
+function itemWrite(categorieId) {
+    menuCategoryItem = '';
+
+    produitsBackend.forEach((produit) => {
+
+        if (categorieId == produit.categorie_id) {
+
+            let dispoTexte = produit.est_disponible ? '' : ' (indisponible)';
+            let disabledAttr = produit.est_disponible ? '' : 'disabled';
+
+            let itemForm = `
+                    <p class="itemName">${produit.nom} ${Number(produit.prix).toFixed(2)}$${dispoTexte}</p>
                     
                     <div class="produitQuantite">
                         <select class="optionValeur optionValeur${produit.id}">
@@ -28,32 +38,60 @@ function itemWrite (item){
                         <option class="option" value="9">9</option>
                         <option class="option" value="10">10</option>
                         </select>
-                        <button class="add" data-produit-id = ${produit.id}>[+]</button>
+                        <button class="add" data-produit-id=${produit.id} ${disabledAttr}>[+]</button>
                     </div>
                     <br>`;
-            menuCategoryItem += itemForm
-
-        }})
-        return menuCategoryItem;
+            menuCategoryItem += itemForm;
+        }
+    });
+    return menuCategoryItem;
 }
 
+// Charger les catégories et produits depuis le backend
+async function chargerMenu() {
+    try {
+        const reponseCat = await fetch(API + '/categories');
+        const dataCat = await reponseCat.json();
 
+        const reponseProd = await fetch(API + '/produits');
+        const dataProd = await reponseProd.json();
 
-categoryList.forEach((item)=> {
-    let categoryForm = `
-    <div class="Category">
-        <p class="categoryName">-----${item}-----</p>
-        <div class="item">
-        ${itemWrite(item)}
-        </div>
-    </div>`
-    
-    menuProduit += categoryForm;
-    menuCategoryItem = '';
-});
+        if (!dataCat.success || !dataProd.success) {
+            document.querySelector('.categoryHolder').innerHTML = '<p>Erreur de chargement.</p>';
+            return;
+        }
 
-document.querySelector('.categoryHolder').innerHTML = menuProduit; 
-document.querySelectorAll('.add').forEach((btn)=>{
+        produitsBackend = dataProd.data;
+        const categories = dataCat.data;
+
+        // Construire le HTML par catégorie
+        categories.forEach((cat) => {
+            let categoryForm = `
+            <div class="Category">
+                <p class="categoryName">-----${cat.nom.toUpperCase()}-----</p>
+                <div class="item">
+                ${itemWrite(cat.id)}
+                </div>
+            </div>`;
+
+            menuProduit += categoryForm;
+            menuCategoryItem = '';
+        });
+
+        document.querySelector('.categoryHolder').innerHTML = menuProduit;
+
+        // Brancher les boutons [+]
+        ajouterEvenementsBoutons();
+
+    } catch (erreur) {
+        document.querySelector('.categoryHolder').innerHTML =
+            '<p style="color:red;">Erreur serveur : ' + erreur.message + '</p>';
+    }
+}
+
+// Brancher les écouteurs sur les boutons [+]
+function ajouterEvenementsBoutons() {
+    document.querySelectorAll('.add').forEach((btn) => {
         btn.addEventListener('click', () => {
 
             let id = Number(btn.dataset.produitId);
@@ -61,18 +99,18 @@ document.querySelectorAll('.add').forEach((btn)=>{
 
             let existItem = panierItems.find(item => item.id == id);
 
-            let select = document.querySelector(".optionValeur"+id);
+            let select = document.querySelector(".optionValeur" + id);
             select.value = "1";
 
             if (existItem) {
                 existItem.quantite += quantite;
             } else {
-                let produit = menuItems.find(p => p.id == id);
+                let produit = produitsBackend.find(p => p.id == id);
                 if (produit) {
                     panierItems.push({
                         id: produit.id,
-                        name: produit.name,
-                        prix: produit.prix,
+                        name: produit.nom,
+                        prix: Number(produit.prix),
                         quantite: quantite,
                     });
                 }
@@ -81,4 +119,63 @@ document.querySelectorAll('.add').forEach((btn)=>{
             updatePanier();
             calculeFrais();
         });
-    })
+    });
+}
+
+// ── Bouton COMMANDER ──────────────────────────────────────────────────────────
+document.querySelector('.commander').addEventListener('click', async () => {
+
+    if (panierItems.length === 0) {
+        alert('Votre panier est vide !');
+        return;
+    }
+
+    // Vérifier que l'utilisateur est connecté
+    let utilisateur = JSON.parse(localStorage.getItem('utilisateur'));
+    if (!utilisateur) {
+        alert('Vous devez être connecté pour commander.');
+        window.location.href = 'seConnecter.html';
+        return;
+    }
+
+    // Demander un créneau de retrait
+    let creneau = prompt('Choisissez votre créneau de retrait (ex: 12:00 - 12:30) :', '12:00 - 12:30');
+    if (!creneau) return;
+
+    // Préparer les données pour le backend
+    let panierBackend = panierItems.map(item => ({
+        produit_id: item.id,
+        quantite: item.quantite
+    }));
+
+    try {
+        let reponse = await fetch(API + '/commandes/creer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                utilisateur_id: utilisateur.id,
+                panier: panierBackend,
+                creneau_retrait: creneau
+            })
+        });
+
+        let data = await reponse.json();
+
+        if (data.success) {
+            alert('Commande #' + data.commandeId + ' validée !\nCréneau : ' + creneau);
+            // Vider le panier en mémoire
+            panierItems.length = 0;
+            updatePanier();
+            panierVide();
+            calculeFrais();
+        } else {
+            alert('Erreur : ' + data.message);
+        }
+
+    } catch (erreur) {
+        alert('Erreur serveur : ' + erreur.message);
+    }
+});
+
+// Init
+chargerMenu();

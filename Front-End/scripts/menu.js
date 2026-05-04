@@ -168,7 +168,9 @@ document.getElementById('btnMesCommandes').addEventListener('click', () => {
     window.location.href = 'mesCommandes.html';
 });
 
-document.getElementById('btnCommander').addEventListener('click', async () => {
+let commandeEnAttente = null;
+
+document.getElementById('btnCommander').addEventListener('click', ()=>{
 
     if (panierItems.length === 0) {
         alert('Votre panier est vide !');
@@ -189,30 +191,58 @@ document.getElementById('btnCommander').addEventListener('click', async () => {
         return;
     }
 
-    let panierBackend = panierItems.map(item => ({
-        produit_id: item.id,
-        quantite: item.quantite
-    }));
+    commandeEnAttente = {
+        utilisateur_id: utilisateur.id,
+        panier: panierItems.map(item => ({ produit_id: item.id, quantite: item.quantite })),
+        creneau_retrait: jour + ' ' + creneau
+    };
+
+    let sousTotal = 0;
+    panierItems.forEach((item)=>{ sousTotal += item.prix * item.quantite; });
+    let taxes = sousTotal * 0.15;
+    let total = sousTotal + taxes;
+
+    let lignes = '';
+    panierItems.forEach((item)=>{
+        lignes += `<p>${item.name} x${item.quantite} — ${(item.prix * item.quantite).toFixed(2)}$</p>`;
+    });
+
+    document.getElementById('resumePaiement').innerHTML = `
+        ${lignes}
+        <p style="margin-top:10px">Sous-total : ${sousTotal.toFixed(2)}$</p>
+        <p>Taxes (15%) : ${taxes.toFixed(2)}$</p>
+        <p style="font-weight:bold;margin-top:5px">TOTAL : ${total.toFixed(2)}$</p>
+        <p style="margin-top:10px;color:rgb(160,160,160)">Créneau : ${jour + ' ' + creneau}</p>
+    `;
+
+    document.getElementById('modalPaiement').style.display = 'flex';
+});
+
+document.getElementById('btnAnnulerPaiement').addEventListener('click', ()=>{
+    commandeEnAttente = null;
+    document.getElementById('modalPaiement').style.display = 'none';
+});
+
+document.getElementById('btnConfirmerPaiement').addEventListener('click', async ()=>{
+    if (!commandeEnAttente) return;
 
     try {
         let reponse = await fetch(API + '/commandes/creer', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                utilisateur_id: utilisateur.id,
-                panier: panierBackend,
-                creneau_retrait: jour + ' ' + creneau
-            })
+            body: JSON.stringify(commandeEnAttente)
         });
 
         let data = await reponse.json();
 
         if (data.success) {
-            alert('Commande #' + data.commandeId + ' validée !\nCréneau : ' + jour + ' ' + creneau);
+            document.getElementById('modalPaiement').style.display = 'none';
+            commandeEnAttente = null;
             panierItems.length = 0;
             updatePanier();
             panierVide();
             calculeFrais();
+            alert('Commande #' + data.commandeId + ' validée !');
         } else {
             alert('Erreur : ' + data.message);
         }

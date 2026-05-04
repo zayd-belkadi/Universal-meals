@@ -4,6 +4,8 @@ let userExistant = JSON.parse(localStorage.getItem('utilisateur'));
 if (userExistant) {
     if (userExistant.role === 'Admin') {
         window.location.href = 'admin.html';
+    } else if (userExistant.role === 'Employe') {
+        window.location.href = 'employe.html';
     } else {
         window.location.href = 'menu.html';
     }
@@ -37,6 +39,8 @@ document.querySelector('.seConnecterB').addEventListener('click', async () => {
 
             if (data.utilisateur.role === 'Admin') {
                 window.location.href = 'admin.html';
+            } else if (data.utilisateur.role === 'Employe') {
+                window.location.href = 'employe.html';
             } else {
                 window.location.href = 'menu.html';
             }

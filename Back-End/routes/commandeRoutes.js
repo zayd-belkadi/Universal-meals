@@ -4,6 +4,8 @@ const commandeController = require('../controllers/commandeController');
 
 router.post('/creer', commandeController.creerCommande);
 router.get('/toutes', commandeController.getToutesLesCommandes);
+router.get('/toutes/details', commandeController.getToutesLesCommandesDetails);
+router.get('/ventes', commandeController.getVentes);
 // Route pour modifier le statut d'une commande spécifique (ex: ID 1)
 router.patch('/:id/statut', commandeController.mettreAJourStatut);
 // Route pour voir l'historique d'un client précis (ex: utilisateur n°1)

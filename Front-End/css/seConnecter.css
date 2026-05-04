@@ -84,3 +84,13 @@ p {
     font-size: 15px;
     font-weight: normal;
 }
+
+@media (max-width: 600px) {
+    .centreBlock {
+        width: 90%;
+        padding: 30px 20px;
+    }
+    .ConnectT {
+        font-size: 34px;
+    }
+}

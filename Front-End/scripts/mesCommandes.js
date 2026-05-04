@@ -35,13 +35,19 @@ async function chargerCommandes() {
             let date = new Date(cmd.date_commande);
             let dateStr = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
 
+            let statutClass = 'statutRecue';
+            if (cmd.statut == 'en préparation') statutClass = 'statutPrep';
+            if (cmd.statut == 'prête') statutClass = 'statutPrete';
+            if (cmd.statut == 'remise') statutClass = 'statutRemise';
+
             html += `<div class="ligneGrille5">
                 <span>#${cmd.id}</span>
-                <span>${cmd.creneau_retrait}</span>
+                <span>${cmd.creneau_retrait.split(' ')[0]}</span>
+                <span><strong>${cmd.creneau_retrait.split(' ')[1]}</strong></span>
                 <span>${Number(cmd.montant_total).toFixed(2)}$</span>
-                <span>${cmd.statut}</span>
+                <span class="${statutClass}">${cmd.statut}</span>
                 <span>${dateStr}</span>
-                <button class="delete" data-commande-id="${cmd.id}">[annuler]</button>
+                <button class="delete" data-commande-id="${cmd.id}">[ ANNULER ]</button>
             </div>`;
         });
 

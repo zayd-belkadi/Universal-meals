@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employé</title>
+    <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<div class="barreNav">
+    <button class="boutonNav decoB" id="btnLogout">[ DÉCONNEXION ]</button>
+</div>
+
+<div class="pageAdmin">
+    <h1>COMMANDES</h1>
+
+    <div class="zoneAjout">
+        <input type="date" id="filtreDate" class="inputT">
+        <button class="boutonAjout" id="btnFiltrer">[ FILTRER ]</button>
+    </div>
+
+    <hr>
+
+    <div class="titreGrilleEmp">
+        <span>#</span>
+        <span>Client</span>
+        <span>Créneau</span>
+        <span>Commande</span>
+        <span>Total</span>
+        <span>Statut</span>
+    </div>
+    <hr>
+    <div id="listeCommandes">Chargement...</div>
+</div>
+
+<script src="scripts/employe.js" type="module"></script>
+</body>
+</html>

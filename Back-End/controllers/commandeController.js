@@ -124,6 +124,66 @@ exports.getCommandesUtilisateur = async (req, res) => {
         res.status(500).json({ success: false, message: "Erreur serveur." });
     }
 };
+exports.getToutesLesCommandesDetails = async (req, res) => {
+    try {
+        const [rows] = await db.query(`
+            SELECT c.id, u.nom AS nom_client, c.montant_total, c.statut, c.creneau_retrait,
+                   p.nom AS produit_nom, lc.quantite, lc.prix_unitaire
+            FROM Commandes c
+            JOIN Utilisateurs u ON c.utilisateur_id = u.id
+            LEFT JOIN Lignes_Commande lc ON lc.commande_id = c.id
+            LEFT JOIN Produits p ON lc.produit_id = p.id
+            ORDER BY c.creneau_retrait ASC
+        `);
+
+        let map = {};
+        rows.forEach((row)=>{
+            if (!map[row.id]) {
+                map[row.id] = {
+                    id: row.id,
+                    nom_client: row.nom_client,
+                    montant_total: row.montant_total,
+                    statut: row.statut,
+                    creneau_retrait: row.creneau_retrait,
+                    items: []
+                };
+            }
+            if (row.produit_nom) {
+                map[row.id].items.push({
+                    nom: row.produit_nom,
+                    quantite: row.quantite,
+                    prix_unitaire: row.prix_unitaire
+                });
+            }
+        });
+
+        res.status(200).json({ success: true, data: Object.values(map) });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Erreur serveur.' });
+    }
+};
+
+exports.getVentes = async (req, res) => {
+    try {
+        const [totaux] = await db.query(
+            'SELECT COUNT(*) as nb_commandes, COALESCE(SUM(montant_total), 0) as revenus_total FROM Commandes'
+        );
+        const [parStatut] = await db.query(
+            'SELECT statut, COUNT(*) as nb FROM Commandes GROUP BY statut'
+        );
+        const [parProduit] = await db.query(`
+            SELECT p.nom, SUM(lc.quantite) as nb_vendus, SUM(lc.quantite * lc.prix_unitaire) as revenus
+            FROM Lignes_Commande lc
+            JOIN Produits p ON lc.produit_id = p.id
+            GROUP BY p.id, p.nom
+            ORDER BY nb_vendus DESC
+        `);
+        res.status(200).json({ success: true, data: { totaux: totaux[0], parStatut, parProduit } });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Erreur serveur.' });
+    }
+};
+
 // 5. Fonction pour annuler/supprimer une commande
 exports.supprimerCommande = async (req, res) => {
     // On récupère l'ID de la commande à supprimer

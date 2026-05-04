@@ -35,6 +35,7 @@ document.querySelectorAll('.boutonNav').forEach((btn)=>{
         if (tabId == 'categories') chargerCategories();
         if (tabId == 'utilisateurs') chargerUtilisateurs();
         if (tabId == 'commandes') chargerCommandes();
+        if (tabId == 'ventes') chargerVentes();
     });
 });
 
@@ -277,6 +278,58 @@ async function chargerCommandes() {
     } catch (err) {
         
         document.getElementById('listeCommandes').innerHTML =
+            '<p style="color:red;">Erreur : ' + err.message + '</p>';
+    }
+}
+
+async function chargerVentes() {
+    try {
+        let r = await fetch(API + '/commandes/ventes');
+        let data = await r.json();
+
+        if (!data.success) {
+            document.getElementById('statsVentes').innerHTML = '<p>Erreur.</p>';
+            return;
+        }
+
+        let t = data.data.totaux;
+        let statsHtml = `<div class="statsCards">
+            <div class="statCard">
+                <p class="statValeur">${t.nb_commandes}</p>
+                <p class="statLabel">commandes</p>
+            </div>
+            <div class="statCard">
+                <p class="statValeur">${Number(t.revenus_total).toFixed(2)}$</p>
+                <p class="statLabel">revenus total</p>
+            </div>`;
+
+        data.data.parStatut.forEach((s)=>{
+            let statutClass = 'statutRecue';
+            if (s.statut == 'en préparation') statutClass = 'statutPrep';
+            if (s.statut == 'prête') statutClass = 'statutPrete';
+            if (s.statut == 'remise') statutClass = 'statutRemise';
+            statsHtml += `<div class="statCard">
+                <p class="statValeur ${statutClass}">${s.nb}</p>
+                <p class="statLabel">${s.statut}</p>
+            </div>`;
+        });
+
+        statsHtml += '</div>';
+        document.getElementById('statsVentes').innerHTML = statsHtml;
+
+        let produitsHtml = '';
+        data.data.parProduit.forEach((p)=>{
+            produitsHtml += `<div class="ligneGrille5" style="grid-template-columns: 1fr 120px 120px">
+                <span>${p.nom}</span>
+                <span>${p.nb_vendus}</span>
+                <span>${Number(p.revenus).toFixed(2)}$</span>
+            </div>`;
+        });
+
+        document.getElementById('ventesProduits').innerHTML = produitsHtml || '<p>Aucune vente.</p>';
+
+    } catch (err) {
+        document.getElementById('statsVentes').innerHTML =
             '<p style="color:red;">Erreur : ' + err.message + '</p>';
     }
 }

@@ -7,17 +7,15 @@ document.getElementById('btnLogout').addEventListener('click', () => {
     window.location.href = 'seConnecter.html';
 });
 
-// URL de base du backend
 const API = 'http://localhost:3001/api';
+
 
 let menuProduit = '';
 let menuCategoryItem = '';
 panierVide();
 
-// On garde les produits récupérés du backend pour les retrouver lors de l'ajout
 let produitsBackend = [];
 
-// Fonction qui crée le HTML pour les items d'une catégorie
 function itemWrite(categorieId) {
     menuCategoryItem = '';
 
@@ -53,7 +51,6 @@ function itemWrite(categorieId) {
     return menuCategoryItem;
 }
 
-// Charger les catégories et produits depuis le backend
 async function chargerMenu() {
     try {
         const reponseCat = await fetch(API + '/categories');
@@ -70,7 +67,6 @@ async function chargerMenu() {
         produitsBackend = dataProd.data;
         const categories = dataCat.data;
 
-        // Construire le HTML par catégorie
         categories.forEach((cat) => {
             let categoryForm = `
             <div class="Category">
@@ -86,7 +82,6 @@ async function chargerMenu() {
 
         document.querySelector('.categoryHolder').innerHTML = menuProduit;
 
-        // Brancher les boutons [+]
         ajouterEvenementsBoutons();
 
     } catch (erreur) {
@@ -95,7 +90,6 @@ async function chargerMenu() {
     }
 }
 
-// Brancher les écouteurs sur les boutons [+]
 function ajouterEvenementsBoutons() {
     document.querySelectorAll('.add').forEach((btn) => {
         btn.addEventListener('click', () => {
@@ -128,7 +122,43 @@ function ajouterEvenementsBoutons() {
     });
 }
 
-// ── Bouton COMMANDER ──────────────────────────────────────────────────────────
+
+const selectJour = document.getElementById('selectJour');
+let jours = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+let mois = ['jan', 'fév', 'mar', 'avr', 'mai', 'jun', 'jul', 'aoû', 'sep', 'oct', 'nov', 'déc'];
+
+for (let i = 0; i < 7; i++) {
+    let d = new Date();
+    d.setDate(d.getDate() + i);
+    let opt = document.createElement('option');
+    opt.value = d.toISOString().split('T')[0];
+    if (i == 0) {
+        opt.textContent = "Aujourd'hui";
+    } else {
+        opt.textContent = jours[d.getDay()] + ' ' + d.getDate() + ' ' + mois[d.getMonth()];
+    }
+    selectJour.appendChild(opt);
+}
+
+// Populate time slot select (06:00 – 18:00, every 1h)
+const selectCreneau = document.getElementById('selectCreneau');
+selectCreneau.innerHTML = `
+    <option value = "" selected >Chosiser un creneau</option>
+    <option value="06:00">06:00</option>
+    <option value="07:00">07:00</option>
+    <option value="08:00">08:00</option>
+    <option value="09:00">09:00</option>
+    <option value="10:00">10:00</option>
+    <option value="11:00">11:00</option>
+    <option value="12:00">12:00</option>
+    <option value="13:00">13:00</option>
+    <option value="14:00">14:00</option>
+    <option value="15:00">15:00</option>
+    <option value="16:00">16:00</option>
+    <option value="17:00">17:00</option>
+`;
+
+
 document.querySelector('.commander').addEventListener('click', async () => {
 
     if (panierItems.length === 0) {
@@ -136,7 +166,6 @@ document.querySelector('.commander').addEventListener('click', async () => {
         return;
     }
 
-    // Vérifier que l'utilisateur est connecté
     let utilisateur = JSON.parse(localStorage.getItem('utilisateur'));
     if (!utilisateur) {
         alert('Vous devez être connecté pour commander.');
@@ -144,11 +173,13 @@ document.querySelector('.commander').addEventListener('click', async () => {
         return;
     }
 
-    // Demander un créneau de retrait
-    let creneau = prompt('Choisissez votre créneau de retrait (ex: 12:00 - 12:30) :', '12:00 - 12:30');
-    if (!creneau) return;
+    let jour = selectJour.value;
+    let creneau = selectCreneau.value;
+    if (!creneau) {
+        alert('Veuillez choisir un créneau !');
+        return;
+    }
 
-    // Préparer les données pour le backend
     let panierBackend = panierItems.map(item => ({
         produit_id: item.id,
         quantite: item.quantite
@@ -161,15 +192,14 @@ document.querySelector('.commander').addEventListener('click', async () => {
             body: JSON.stringify({
                 utilisateur_id: utilisateur.id,
                 panier: panierBackend,
-                creneau_retrait: creneau
+                creneau_retrait: jour + ' ' + creneau
             })
         });
 
         let data = await reponse.json();
 
         if (data.success) {
-            alert('Commande #' + data.commandeId + ' validée !\nCréneau : ' + creneau);
-            // Vider le panier en mémoire
+            alert('Commande #' + data.commandeId + ' validée !\nCréneau : ' + jour + ' ' + creneau);
             panierItems.length = 0;
             updatePanier();
             panierVide();
@@ -183,5 +213,4 @@ document.querySelector('.commander').addEventListener('click', async () => {
     }
 });
 
-// Init
 chargerMenu();

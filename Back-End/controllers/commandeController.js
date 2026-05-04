@@ -31,6 +31,9 @@ exports.creerCommande = async (req, res) => {
             });
         }
 
+        let taxes = montant_total * 0.15;
+        montant_total = montant_total + taxes;
+
         const [resultatCommande] = await connection.query(
             'INSERT INTO Commandes (utilisateur_id, montant_total, creneau_retrait) VALUES (?, ?, ?)',
             [utilisateur_id, montant_total, creneau_retrait]

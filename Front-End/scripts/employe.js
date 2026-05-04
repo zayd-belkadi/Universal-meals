@@ -45,28 +45,31 @@ async function chargerCommandes() {
 
         let html = '';
         commandesFiltrees.forEach((c)=>{
-            let statutClass = 'statutRecue';
-            if (c.statut == 'en préparation') statutClass = 'statutPrep';
-            if (c.statut == 'prête') statutClass = 'statutPrete';
-            if (c.statut == 'remise') statutClass = 'statutRemise';
+            let opacite = c.statut == 'remise' ? 'style="opacity:0.5"' : '';
+
+            let heure = c.creneau_retrait.split(' ')[1];
 
             let itemsHtml = '';
             c.items.forEach((item)=>{
-                itemsHtml += `<span class="ligneItem">• ${item.nom} x${item.quantite}</span>`;
+                itemsHtml += `<div class="carteItem">• ${item.nom} x${item.quantite}</div>`;
             });
 
-            html += `<div class="ligneGrilleEmp">
-                <span>#${c.id}</span>
-                <span>${c.nom_client}</span>
-                <span>${c.creneau_retrait}</span>
-                <div class="itemsCommande">${itemsHtml}</div>
-                <span>${Number(c.montant_total).toFixed(2)}$</span>
-                <select class="selectStatut" data-commande-id="${c.id}">
-                    <option class="${c.statut == 'reçue' ? 'statutRecue' : ''}" value="reçue" ${c.statut == 'reçue' ? 'selected' : ''}>reçue</option>
-                    <option class="${c.statut == 'en préparation' ? 'statutPrep' : ''}" value="en préparation" ${c.statut == 'en préparation' ? 'selected' : ''}>en préparation</option>
-                    <option value="prête" ${c.statut == 'prête' ? 'selected' : ''}>prête</option>
-                    <option value="remise" ${c.statut == 'remise' ? 'selected' : ''}>remise</option>
-                </select>
+            html += `<div class="carteCommande" ${opacite}>
+                <div class="carteEntete">
+                    <span class="carteNumero">#${c.id}</span>
+                    <span class="carteCreneau">${heure}</span>
+                </div>
+                <div class="carteClient">${c.nom_client}</div>
+                <div class="carteItems">${itemsHtml}</div>
+                <div class="cartePied">
+                    <span class="carteTotal">${Number(c.montant_total).toFixed(2)}$</span>
+                    <select class="selectStatut" data-commande-id="${c.id}">
+                        <option value="reçue"          ${c.statut == 'reçue'           ? 'selected' : ''}>reçue</option>
+                        <option value="en préparation" ${c.statut == 'en préparation'  ? 'selected' : ''}>en préparation</option>
+                        <option value="prête"          ${c.statut == 'prête'           ? 'selected' : ''}>prête</option>
+                        <option value="remise"         ${c.statut == 'remise'          ? 'selected' : ''}>remise</option>
+                    </select>
+                </div>
             </div>`;
         });
 

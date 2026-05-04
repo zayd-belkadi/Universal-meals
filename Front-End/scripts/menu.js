@@ -218,13 +218,111 @@ document.getElementById('btnCommander').addEventListener('click', ()=>{
     document.getElementById('modalPaiement').style.display = 'flex';
 });
 
+document.getElementById('numeroCb').addEventListener('input', (e) => {
+    let chiffres = e.target.value.replace(/\D/g, '');
+    chiffres = chiffres.substring(0, 16);
+    let resultat = '';
+    for (let i = 0; i < chiffres.length; i++) {
+        if (i > 0 && i % 4 === 0) resultat += ' ';
+        resultat += chiffres[i];
+    }
+    e.target.value = resultat;
+});
+
+document.getElementById('dateExpCb').addEventListener('input', (e) => {
+    let chiffres = e.target.value.replace(/\D/g, '');
+    chiffres = chiffres.substring(0, 4);
+    if (chiffres.length > 2) {
+        e.target.value = chiffres.substring(0, 2) + '/' + chiffres.substring(2);
+    } else {
+        e.target.value = chiffres;
+    }
+});
+
+document.getElementById('codeCvv').addEventListener('input', (e) => {
+    let chiffres = e.target.value.replace(/\D/g, '');
+    e.target.value = chiffres.substring(0, 4);
+});
+
+const regexNom    = /^[A-Za-zÀ-ÿ\s\-']{2,50}$/;
+const regexCarte  = /^\d{4} \d{4} \d{4} \d{4}$/;
+const regexDate   = /^(0[1-9]|1[0-2])\/\d{2}$/;
+const regexCvv    = /^\d{3,4}$/;
+
 document.getElementById('btnAnnulerPaiement').addEventListener('click', ()=>{
     commandeEnAttente = null;
+    document.getElementById('nomTitulaire').value = '';
+    document.getElementById('numeroCb').value = '';
+    document.getElementById('dateExpCb').value = '';
+    document.getElementById('codeCvv').value = '';
+    document.getElementById('nomTitulaire').classList.remove('inputError');
+    document.getElementById('numeroCb').classList.remove('inputError');
+    document.getElementById('dateExpCb').classList.remove('inputError');
+    document.getElementById('codeCvv').classList.remove('inputError');
+    document.getElementById('errNom').textContent = '';
+    document.getElementById('errNumero').textContent = '';
+    document.getElementById('errDate').textContent = '';
+    document.getElementById('errCode').textContent = '';
     document.getElementById('modalPaiement').style.display = 'none';
 });
 
 document.getElementById('btnConfirmerPaiement').addEventListener('click', async ()=>{
     if (!commandeEnAttente) return;
+
+    let nom          = document.getElementById('nomTitulaire').value.trim();
+    let numeroCarte  = document.getElementById('numeroCb').value.trim();
+    let dateExp      = document.getElementById('dateExpCb').value.trim();
+    let cvv          = document.getElementById('codeCvv').value.trim();
+
+    document.getElementById('nomTitulaire').classList.remove('inputError');
+    document.getElementById('numeroCb').classList.remove('inputError');
+    document.getElementById('dateExpCb').classList.remove('inputError');
+    document.getElementById('codeCvv').classList.remove('inputError');
+    document.getElementById('errNom').textContent = '';
+    document.getElementById('errNumero').textContent = '';
+    document.getElementById('errDate').textContent = '';
+    document.getElementById('errCode').textContent = '';
+
+    let valide = true;
+
+    if (!regexNom.test(nom)) {
+        document.getElementById('nomTitulaire').classList.add('inputError');
+        document.getElementById('errNom').textContent = 'Nom invalide (lettres et espaces uniquement)';
+        valide = false;
+    }
+
+    if (!regexCarte.test(numeroCarte)) {
+        document.getElementById('numeroCb').classList.add('inputError');
+        document.getElementById('errNumero').textContent = 'Numéro invalide (format : 0000 0000 0000 0000)';
+        valide = false;
+    }
+
+    if (!regexDate.test(dateExp)) {
+        document.getElementById('dateExpCb').classList.add('inputError');
+        document.getElementById('errDate').textContent = 'Date invalide (format : MM/AA)';
+        valide = false;
+    } else {
+        let parties     = dateExp.split('/');
+        let mois        = parseInt(parties[0]);
+        let annee       = parseInt(parties[1]);
+        let dateExpiration = new Date(2000 + annee, mois - 1, 1);
+        let aujourdhui  = new Date();
+        aujourdhui.setDate(1);
+        aujourdhui.setHours(0, 0, 0, 0);
+        if (dateExpiration < aujourdhui) {
+            document.getElementById('dateExpCb').classList.add('inputError'); 
+            document.getElementById('errDate').textContent = 'Carte expirée';
+            valide = false;
+        }
+    }
+
+    if (!regexCvv.test(cvv)) {
+        document.getElementById('codeCvv').classList.add('inputError');
+        document.getElementById('errCode').textContent = 'CVV invalide (3 ou 4 chiffres)';
+        valide = false;
+    }
+
+    if (!valide) return;
 
     try {
         let reponse = await fetch(API + '/commandes/creer', {
@@ -238,6 +336,10 @@ document.getElementById('btnConfirmerPaiement').addEventListener('click', async 
         if (data.success) {
             document.getElementById('modalPaiement').style.display = 'none';
             commandeEnAttente = null;
+            document.getElementById('nomTitulaire').value = '';
+            document.getElementById('numeroCb').value = '';
+            document.getElementById('dateExpCb').value = '';
+            document.getElementById('codeCvv').value = '';
             panierItems.length = 0;
             updatePanier();
             panierVide();

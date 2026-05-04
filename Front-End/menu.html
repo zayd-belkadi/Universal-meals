@@ -13,7 +13,7 @@
     <div class="gridMP">
         <div>
             <div class="menu">
-                <h1>MENU</h1>
+                <h1 class="menuTitle">MENU</h1>
                 <div class="categoryHolder">
                 </div>
             </div>
@@ -59,6 +59,30 @@
         <h2 class="modalTitre">PAIEMENT</h2>
         <div id="resumePaiement"></div>
         <hr>
+        <div class="paymentForm">
+            <div class="paymentField">
+                <label class="paymentLabel">NOM DU TITULAIRE</label>
+                <input type="text" id="nomTitulaire" class="paymentInput" placeholder="JEAN DUPONT" maxlength="50" autocomplete="off">
+                <span class="paymentError" id="errNom"></span>
+            </div>
+            <div class="paymentField">
+                <label class="paymentLabel">NUMÉRO DE CARTE</label>
+                <input type="text" id="numeroCb" class="paymentInput" placeholder="0000 0000 0000 0000" maxlength="19" autocomplete="off">
+                <span class="paymentError" id="errNumero"></span>
+            </div>
+            <div class="paymentRow">
+                <div class="paymentField">
+                    <label class="paymentLabel">DATE D'EXPIRATION</label>
+                    <input type="text" id="dateExpCb" class="paymentInput" placeholder="MM/AA" maxlength="5" autocomplete="off">
+                    <span class="paymentError" id="errDate"></span>
+                </div>
+                <div class="paymentField">
+                    <label class="paymentLabel">CVV</label>
+                    <input type="text" id="codeCvv" class="paymentInput" placeholder="000" maxlength="4" autocomplete="off">
+                    <span class="paymentError" id="errCode"></span>
+                </div>
+            </div>
+        </div>
         <button class="boutonAjout" id="btnConfirmerPaiement">[ CONFIRMER LE PAIEMENT ]</button>
         <button class="boutonAjout" id="btnAnnulerPaiement" style="margin-left:20px">[ ANNULER ]</button>
     </div>

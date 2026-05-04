@@ -1,15 +1,18 @@
-.adminPage {
-    padding: 30px 50px;
+.pageAdmin {
+    padding: 50px 50px 30px 50px;
+}
+.wrapperC {
+    margin: 0 auto;
+    width: fit-content;
 }
 
-/* Onglets */
-.tabs {
+.barreNav {
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
     margin-bottom: 10px;
 }
-.tab {
+.boutonNav {
     background-color: rgba(0, 0, 0, 0);
     color: white;
     border: 0;
@@ -18,27 +21,26 @@
     padding: 0;
     transition: color 0.2s;
 }
-.tab:hover {
+.boutonNav:hover {
     color: rgb(255, 251, 5);
 }
-.tab.active {
+.boutonNav.actif {
     color: rgb(255, 251, 5);
     font-weight: bold;
 }
-.tab.logout {
+.boutonNav.decoB {
     margin-left: auto;
 }
 
-/* Formulaire */
-.form {
+.zoneAjout {
     margin-top: 20px;
     margin-bottom: 30px;
 }
-.formTitle {
+.titreAjout {
     font-size: 20px;
     margin-bottom: 15px;
 }
-.champ {
+.inputT {
     background-color: rgb(50, 50, 50);
     color: white;
     border: 0;
@@ -50,13 +52,13 @@
     outline: none;
     width: 200px;
 }
-.champ::placeholder {
+.inputT::placeholder {
     color: rgb(160, 160, 160);
 }
-.champ:focus {
+.inputT:focus {
     border-bottom: 1px solid rgb(255, 251, 5);
 }
-.btnAction {
+.boutonAjout {
     background-color: rgba(0, 0, 0, 0);
     color: white;
     border: 0;
@@ -65,27 +67,41 @@
     cursor: pointer;
     transition: color 0.2s;
 }
-.btnAction:hover {
+.boutonAjout:hover {
     color: rgb(255, 251, 5);
 }
 
-/* Listes (tableau visuel) */
-.listeTitre {
+.titreGrille {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     font-weight: bold;
     margin-bottom: 5px;
 }
-.ligne {
+.ligneGrille {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     padding: 8px 0;
     align-items: center;
 }
-.ligne:hover {
+.ligneGrille:hover {
     color: rgb(255, 251, 5);
 }
-.btnLigne {
+.titreGrille5 {
+    display: grid;
+    grid-template-columns: 60px 220px 100px 130px 110px 100px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.ligneGrille5 {
+    display: grid;
+    grid-template-columns: 60px 220px 100px 130px 110px 100px;
+    padding: 8px 0;
+    align-items: center;
+}
+.ligneGrille5:hover {
+    color: rgb(255, 251, 5);
+}
+.boutonL {
     background-color: rgba(0, 0, 0, 0);
     color: white;
     border: 0;
@@ -94,12 +110,12 @@
     margin-right: 10px;
     transition: color 0.2s;
 }
-.btnLigne:hover {
+.boutonL:hover {
     color: rgb(255, 251, 5);
 }
-.dispoON {
+.dispoOui {
     color: rgb(150, 255, 150);
 }
-.dispoOFF {
+.dispoNon {
     color: rgb(255, 100, 100);
 }

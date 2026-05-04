@@ -1,7 +1,5 @@
-// URL de base du backend
 const API = 'http://localhost:3001/api';
 
-// Si déjà connecté, rediriger selon le rôle
 let userExistant = JSON.parse(localStorage.getItem('utilisateur'));
 if (userExistant) {
     if (userExistant.role === 'Admin') {
@@ -11,7 +9,6 @@ if (userExistant) {
     }
 }
 
-// ── CONNEXION ─────────────────────────────────────────────────────────────────
 document.querySelector('.seConnecterB').addEventListener('click', async () => {
 
     let email = document.getElementById('usernameC').value.trim();
@@ -35,11 +32,9 @@ document.querySelector('.seConnecterB').addEventListener('click', async () => {
         let data = await reponse.json();
 
         if (data.success) {
-            // Sauvegarder l'utilisateur et le token JWT pour les prochaines requêtes
             localStorage.setItem('utilisateur', JSON.stringify(data.utilisateur));
             localStorage.setItem('token', data.token);
 
-            // Rediriger selon le rôle
             if (data.utilisateur.role === 'Admin') {
                 window.location.href = 'admin.html';
             } else {
@@ -53,7 +48,6 @@ document.querySelector('.seConnecterB').addEventListener('click', async () => {
         alert('Erreur serveur : ' + erreur.message);
     }
 });
-// ── INSCRIPTION ───────────────────────────────────────────────────────────────
 document.querySelector('.senregistrerB').addEventListener('click', async () => {
 
     let email = document.getElementById('usernameE').value.trim();
@@ -64,8 +58,6 @@ document.querySelector('.senregistrerB').addEventListener('click', async () => {
         return;
     }
 
-    // Comme le formulaire n'a pas de champ "nom" séparé,
-    // on utilise la partie avant le @ de l'email comme nom (ex: "kabra@cafe.com" -> "kabra")
     let nom = email.split('@')[0];
 
     try {
@@ -84,7 +76,6 @@ document.querySelector('.senregistrerB').addEventListener('click', async () => {
 
         if (data.success) {
             alert('Compte créé ! Vous pouvez maintenant vous connecter.');
-            // Vider les champs d'inscription
             document.getElementById('usernameE').value = '';
             document.getElementById('passwordE').value = '';
         } else {

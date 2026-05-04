@@ -70,7 +70,7 @@ async function chargerMenu() {
         categories.forEach((cat) => {
             let categoryForm = `
             <div class="Category">
-                <p class="categoryName">-----${cat.nom.toUpperCase()}-----</p>
+                <p class="categoryName">**${cat.nom.toUpperCase()}**</p>
                 <div class="item">
                 ${itemWrite(cat.id)}
                 </div>
@@ -124,23 +124,28 @@ function ajouterEvenementsBoutons() {
 
 
 const selectJour = document.getElementById('selectJour');
+
 let jours = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
 let mois = ['jan', 'fév', 'mar', 'avr', 'mai', 'jun', 'jul', 'aoû', 'sep', 'oct', 'nov', 'déc'];
 
 for (let i = 0; i < 7; i++) {
+
     let d = new Date();
     d.setDate(d.getDate() + i);
+
     let opt = document.createElement('option');
     opt.value = d.toISOString().split('T')[0];
+
     if (i == 0) {
         opt.textContent = "Aujourd'hui";
     } else {
         opt.textContent = jours[d.getDay()] + ' ' + d.getDate() + ' ' + mois[d.getMonth()];
     }
+
     selectJour.appendChild(opt);
+
 }
 
-// Populate time slot select (06:00 – 18:00, every 1h)
 const selectCreneau = document.getElementById('selectCreneau');
 selectCreneau.innerHTML = `
     <option value = "" selected >Chosiser un creneau</option>
@@ -159,7 +164,11 @@ selectCreneau.innerHTML = `
 `;
 
 
-document.querySelector('.commander').addEventListener('click', async () => {
+document.getElementById('btnMesCommandes').addEventListener('click', () => {
+    window.location.href = 'mesCommandes.html';
+});
+
+document.getElementById('btnCommander').addEventListener('click', async () => {
 
     if (panierItems.length === 0) {
         alert('Votre panier est vide !');

@@ -7,85 +7,82 @@
 </head>
 <body>
 
-<div class="adminPage">
+<div class="pageAdmin">
 
-    <!-- Onglets de navigation -->
-    <div class="tabs">
-        <button class="tab active" data-tab="produits">[ PRODUITS ]</button>
-        <button class="tab" data-tab="categories">[ CATÉGORIES ]</button>
-        <button class="tab" data-tab="utilisateurs">[ UTILISATEURS ]</button>
-        <button class="tab" data-tab="commandes">[ COMMANDES ]</button>
-        <button class="tab logout" id="btnLogout">[ DÉCONNEXION ]</button>
+    <div class="barreNav">
+        <button class="boutonNav actif" data-tab="produits">[ PRODUITS ]</button>
+        <button class="boutonNav" data-tab="categories">[ CATÉGORIES ]</button>
+        <button class="boutonNav" data-tab="utilisateurs">[ UTILISATEURS ]</button>
+        <button class="boutonNav" data-tab="commandes">[ COMMANDES ]</button>
+        <button class="boutonNav decoB" id="btnLogout">[ DÉCONNEXION ]</button>
     </div>
 
-    <p>--------------------------------------------------------</p>
+        <hr>
 
-    <!-- ===== ONGLET PRODUITS ===== -->
-    <div class="tabContent" id="tab-produits">
+    <div class="sectionOnglet" id="tab-produits">
         <h1>PRODUITS</h1>
 
-        <div class="form">
-            <p class="formTitle">----- AJOUTER UN PRODUIT -----</p>
-            <input type="text" id="prodNom" class="champ" placeholder="Nom">
-            <input type="text" id="prodDesc" class="champ" placeholder="Description">
-            <input type="number" id="prodPrix" class="champ" placeholder="Prix" step="0.01">
-            <select id="prodCat" class="champ"></select>
-            <button class="btnAction" id="btnAjouterProduit">[ AJOUTER ]</button>
+        <div class="zoneAjout">
+            <p class="titreAjout">----- AJOUTER UN PRODUIT -----</p>
+            <input type="text" id="prodNom" class="inputT" placeholder="Nom">
+            <input type="text" id="prodDesc" class="inputT" placeholder="Description">
+            <input type="number" id="prodPrix" class="inputT" placeholder="Prix" step="0.01">
+            <select id="prodCat" class="inputT"></select>
+            <button class="boutonAjout" id="btnAjouterProduit">[ AJOUTER ]</button>
         </div>
 
-        <p>--------------------------------------------------------</p>
+        <hr>
 
-        <div class="listeTitre">
+        <div class="titreGrille">
             <span>Nom</span>
             <span>Prix</span>
             <span>Disponible</span>
             <span>Action</span>
         </div>
-        <p>--------------------------------------------------------</p>
+        <hr>
         <div id="listeProduits">Chargement...</div>
     </div>
 
-    <!-- ===== ONGLET CATEGORIES ===== -->
-    <div class="tabContent" id="tab-categories" style="display:none">
+    <div class="sectionOnglet" id="tab-categories" style="display:none">
         <h1>CATÉGORIES</h1>
 
-        <div class="form">
-            <p class="formTitle">----- AJOUTER UNE CATÉGORIE -----</p>
-            <input type="text" id="catNom" class="champ" placeholder="Nom de la catégorie">
-            <button class="btnAction" id="btnAjouterCat">[ AJOUTER ]</button>
+        <div class="zoneAjout">
+            <p class="titreAjout">----- AJOUTER UNE CATÉGORIE -----</p>
+            <input type="text" id="catNom" class="inputT" placeholder="Nom de la catégorie">
+            <button class="boutonAjout" id="btnAjouterCat">[ AJOUTER ]</button>
         </div>
 
-        <p>--------------------------------------------------------</p>
+        <hr>
 
         <div id="listeCategories">Chargement...</div>
     </div>
 
-    <!-- ===== ONGLET UTILISATEURS ===== -->
-    <div class="tabContent" id="tab-utilisateurs" style="display:none">
+    <div class="sectionOnglet" id="tab-utilisateurs" style="display:none">
         <h1>UTILISATEURS</h1>
-        <p>--------------------------------------------------------</p>
-        <div class="listeTitre">
+        <hr>
+        <div class="titreGrille">
             <span>Nom</span>
             <span>Email</span>
             <span>Rôle</span>
             <span>Date</span>
         </div>
-        <p>--------------------------------------------------------</p>
+        <hr>
         <div id="listeUtilisateurs">Chargement...</div>
     </div>
 
-    <!-- ===== ONGLET COMMANDES ===== -->
-    <div class="tabContent" id="tab-commandes" style="display:none">
+    <div class="sectionOnglet" id="tab-commandes" style="display:none">
         <h1>COMMANDES</h1>
-        <p>--------------------------------------------------------</p>
-        <div class="listeTitre">
+        <hr>
+        <div class="titreGrille">
             <span>#</span>
             <span>Client</span>
             <span>Total</span>
             <span>Statut</span>
         </div>
-        <p>--------------------------------------------------------</p>
+        <hr>
+
         <div id="listeCommandes">Chargement...</div>
+        <hr>
     </div>
 
 </div>

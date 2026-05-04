@@ -5,6 +5,9 @@ const db = require('./config/db'); // Le bon chemin vers la DB
 const app = express();
 const PORT = 3001;
 
+const cors = require('cors');
+app.use(cors());
+
 // Middleware pour lire le JSON envoyé par le frontend
 app.use(express.json());
 

@@ -1,7 +1,7 @@
 html,body{
     margin: 0;
     padding: 0;
-    background-color: rgb(228, 228, 228)
+    background-color: rgb(54, 54, 54)
 }
 p{
     margin: 0;
@@ -14,7 +14,7 @@ p{
     left: 50%;
     transform: translate(-50%, -50%);
 
-    background-color: white;
+    background-color: rgb(240, 240, 240);
     border-radius: 20px;
     height: 700px;
     width: 500px;
@@ -73,16 +73,18 @@ p{
     border-radius: 20px;
     border-width: 0px;
     color: white;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, color 0.3s;
 }
-.seConnecterB{background-color: rgb(255, 167, 44);}
-.senregistrerB{background-color: rgb(219, 122, 66);}
+.seConnecterB{background-color: rgb(0, 0, 0);}
+.senregistrerB{background-color: rgb(0, 0, 0);}
 .seConnecterB:hover{
-    background-color: rgb(255, 149, 0);
+    background-color: rgb(177, 177, 177);
+    color: rgb(0, 0, 0);
     cursor:pointer;
 }
 .senregistrerB:hover{
-    background-color: rgb(210, 77, 33);
+    background-color: rgb(177, 177, 177);
+    color: black;
     cursor:pointer;
 }
 .ligne{
@@ -96,7 +98,7 @@ p{
     left: 50%;
     transform: translate(-50%);
     margin-top: -17px;
-    background-color: white;
+    background-color: rgb(240, 240, 240);
 }
 ::placeholder{
     font-size: 20px;

@@ -1,6 +1,12 @@
 import {panierItems} from '../data/panier.js'
 import {updatePanier, panierVide, calculeFrais} from './panier.js'
 
+document.getElementById('btnLogout').addEventListener('click', () => {
+    localStorage.removeItem('utilisateur');
+    localStorage.removeItem('token');
+    window.location.href = 'seConnecter.html';
+});
+
 // URL de base du backend
 const API = 'http://localhost:3001/api';
 

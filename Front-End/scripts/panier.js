@@ -11,7 +11,7 @@ export function panierVide(){
 export function calculeFrais(){
     let SousTotal = 0;
     panierItems.forEach((item)=>{
-        SousTotal = Number(((item.prix)*item.quantite)/100) + SousTotal;
+        SousTotal = Number(((item.prix)*item.quantite)) + SousTotal;
     })
     let taxes = SousTotal * 0.15;
     let total = SousTotal + taxes;
@@ -31,7 +31,7 @@ export function updatePanier (){
                 <button class="arrowQRight" data-produit-id="${item.id}">></button>
             </div>
             
-            <span>${((item.prix * item.quantite)/100).toFixed(2)}$</span>
+            <span>${((item.prix * item.quantite)).toFixed(2)}$</span>
             <button class="delete" data-produit-id="${item.id}">[x]</button>
         </div>`
         

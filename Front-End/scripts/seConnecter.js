@@ -1,23 +1,21 @@
 // URL de base du backend
 const API = 'http://localhost:3001/api';
 
-// Si déjà connecté, aller au menu
-if (localStorage.getItem('utilisateur')) {
-    window.location.href = 'menu.html';
+// Si déjà connecté, rediriger selon le rôle
+let userExistant = JSON.parse(localStorage.getItem('utilisateur'));
+if (userExistant) {
+    if (userExistant.role === 'Admin') {
+        window.location.href = 'admin.html';
+    } else {
+        window.location.href = 'menu.html';
+    }
 }
-
-// Les deux formulaires partagent les mêmes classes (.usernameT, .passwordT)
-// Donc on récupère TOUS les éléments et on prend par index :
-//   index 0 = formulaire CONNEXION
-//   index 1 = formulaire INSCRIPTION
-const tousUsername = document.querySelectorAll('.usernameT');
-const tousPassword = document.querySelectorAll('.passwordT');
 
 // ── CONNEXION ─────────────────────────────────────────────────────────────────
 document.querySelector('.seConnecterB').addEventListener('click', async () => {
 
-    let email = tousUsername[0].value.trim();
-    let motDePasse = tousPassword[0].value.trim();
+    let email = document.getElementById('usernameC').value.trim();
+    let motDePasse = document.getElementById('passwordC').value.trim();
 
     if (email === '' || motDePasse === '') {
         alert('Remplissez tous les champs.');
@@ -40,7 +38,13 @@ document.querySelector('.seConnecterB').addEventListener('click', async () => {
             // Sauvegarder l'utilisateur et le token JWT pour les prochaines requêtes
             localStorage.setItem('utilisateur', JSON.stringify(data.utilisateur));
             localStorage.setItem('token', data.token);
-            window.location.href = 'menu.html';
+
+            // Rediriger selon le rôle
+            if (data.utilisateur.role === 'Admin') {
+                window.location.href = 'admin.html';
+            } else {
+                window.location.href = 'menu.html';
+            }
         } else {
             alert(data.message);
         }
@@ -49,12 +53,11 @@ document.querySelector('.seConnecterB').addEventListener('click', async () => {
         alert('Erreur serveur : ' + erreur.message);
     }
 });
-
 // ── INSCRIPTION ───────────────────────────────────────────────────────────────
 document.querySelector('.senregistrerB').addEventListener('click', async () => {
 
-    let email = tousUsername[1].value.trim();
-    let motDePasse = tousPassword[1].value.trim();
+    let email = document.getElementById('usernameE').value.trim();
+    let motDePasse = document.getElementById('passwordE').value.trim();
 
     if (email === '' || motDePasse === '') {
         alert('Remplissez tous les champs.');
@@ -82,8 +85,8 @@ document.querySelector('.senregistrerB').addEventListener('click', async () => {
         if (data.success) {
             alert('Compte créé ! Vous pouvez maintenant vous connecter.');
             // Vider les champs d'inscription
-            tousUsername[1].value = '';
-            tousPassword[1].value = '';
+            document.getElementById('usernameE').value = '';
+            document.getElementById('passwordE').value = '';
         } else {
             alert(data.message);
         }

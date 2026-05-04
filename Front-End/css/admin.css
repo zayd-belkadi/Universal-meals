@@ -1,0 +1,105 @@
+.adminPage {
+    padding: 30px 50px;
+}
+
+/* Onglets */
+.tabs {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+.tab {
+    background-color: rgba(0, 0, 0, 0);
+    color: white;
+    border: 0;
+    font-size: 17px;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s;
+}
+.tab:hover {
+    color: rgb(255, 251, 5);
+}
+.tab.active {
+    color: rgb(255, 251, 5);
+    font-weight: bold;
+}
+.tab.logout {
+    margin-left: auto;
+}
+
+/* Formulaire */
+.form {
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+.formTitle {
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+.champ {
+    background-color: rgb(50, 50, 50);
+    color: white;
+    border: 0;
+    border-bottom: 1px solid white;
+    font-size: 16px;
+    padding: 6px 0;
+    margin-right: 20px;
+    margin-bottom: 10px;
+    outline: none;
+    width: 200px;
+}
+.champ::placeholder {
+    color: rgb(160, 160, 160);
+}
+.champ:focus {
+    border-bottom: 1px solid rgb(255, 251, 5);
+}
+.btnAction {
+    background-color: rgba(0, 0, 0, 0);
+    color: white;
+    border: 0;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.btnAction:hover {
+    color: rgb(255, 251, 5);
+}
+
+/* Listes (tableau visuel) */
+.listeTitre {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.ligne {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    padding: 8px 0;
+    align-items: center;
+}
+.ligne:hover {
+    color: rgb(255, 251, 5);
+}
+.btnLigne {
+    background-color: rgba(0, 0, 0, 0);
+    color: white;
+    border: 0;
+    cursor: pointer;
+    font-size: 16px;
+    margin-right: 10px;
+    transition: color 0.2s;
+}
+.btnLigne:hover {
+    color: rgb(255, 251, 5);
+}
+.dispoON {
+    color: rgb(150, 255, 150);
+}
+.dispoOFF {
+    color: rgb(255, 100, 100);
+}

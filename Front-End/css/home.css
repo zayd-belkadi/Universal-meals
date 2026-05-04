@@ -1,5 +1,9 @@
 html, body {
-    background-color: rgb(50, 50, 50);
+     background-image: url('../image.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     color: white;
     margin: 0;
     padding: 0;
@@ -24,6 +28,8 @@ p{
     justify-content: flex-end;
 }
 .panier {
+    background-color: rgba(0, 0, 0, 0.363);
+    border-style: solid;
     padding: 20px;
     margin-top: 40px;
 }
@@ -56,13 +62,16 @@ p{
 }
 
 .categoryHolder {
+    margin-top: 200px;
     display: grid;
-    grid-template-columns: repeat(auto-fill, 280px);
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 35px;
     align-items: start;
 }
 .Category {
-    width: 280px;
+    background-color: rgba(0, 0, 0, 0.363);
+    width: 100%;
+    box-sizing: border-box;
     overflow: hidden;
     border: 1px solid rgb(90, 90, 90);
     border-radius: 8px;

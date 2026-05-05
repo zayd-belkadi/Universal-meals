@@ -241,13 +241,13 @@ document.getElementById('dateExpCb').addEventListener('input', (e) => {
 
 document.getElementById('codeCvv').addEventListener('input', (e) => {
     let chiffres = e.target.value.replace(/\D/g, '');
-    e.target.value = chiffres.substring(0, 4);
+    e.target.value = chiffres.substring(0, 3);
 });
 
 const regexNom    = /^[A-Za-zÀ-ÿ\s\-']{2,50}$/;
 const regexCarte  = /^\d{4} \d{4} \d{4} \d{4}$/;
 const regexDate   = /^(0[1-9]|1[0-2])\/\d{2}$/;
-const regexCvv    = /^\d{3,4}$/;
+const regexCvv    = /^\d{3}$/;
 
 document.getElementById('btnAnnulerPaiement').addEventListener('click', ()=>{
     commandeEnAttente = null;

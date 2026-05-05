@@ -17,4 +17,6 @@ router.put('/:id', auth.verifierToken, auth.estAdmin, produitController.mettreAJ
 // Route pour changer uniquement la disponibilité (PATCH) - Accessible par Admin ET Employé
 router.patch('/:id/disponibilite', auth.verifierToken, auth.estEmployeOuAdmin, produitController.changerDisponibilite);
 
+router.delete('/:id', auth.verifierToken, auth.estAdmin, produitController.supprimerProduit);
+
 module.exports = router;

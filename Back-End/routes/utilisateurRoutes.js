@@ -12,4 +12,6 @@ router.post('/connexion', utilisateurController.connexion);
 //
 router.get('/', auth.verifierToken, auth.estAdmin, utilisateurController.getAllUtilisateurs);
 
+router.patch('/:id/role', auth.verifierToken, auth.estAdmin, utilisateurController.changerRole);
+
 module.exports = router;

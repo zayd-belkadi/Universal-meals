@@ -78,7 +78,10 @@ async function chargerProduits() {
                 <span>${p.nom}</span>
                 <span>${Number(p.prix).toFixed(2)}$</span>
                 <span class="${dispoClass}">${dispoTxt}</span>
-                <span><button class="boutonL" data-id="${p.id}" data-action="toggle">[ ${btnTxt} ]</button></span>
+                <span>
+                    <button class="boutonL" data-id="${p.id}" data-action="toggle">[ ${btnTxt} ]</button>
+                    <button class="boutonL" data-id="${p.id}" data-action="supprimer">[ Supprimer ]</button>
+                </span>
             </div>`;
         });
 
@@ -90,18 +93,35 @@ async function chargerProduits() {
                 let produit = data.data.find((p)=> p.id == id);
                 let nouveauStatut = !produit.est_disponible;
                 try {
-
                     let r = await fetch(API + '/produits/' + id + '/disponibilite', {
                         method: 'PATCH',
                         headers: headersAuth,
                         body: JSON.stringify({ est_disponible: nouveauStatut })
                     });
-
                     let result = await r.json();
                     if (result.success) {
                         chargerProduits();
                     } else {
+                        alert(result.message);
+                    }
+                } catch (err) {
+                    alert('Erreur : ' + err.message);
+                }
+            });
+        });
 
+        document.querySelectorAll('[data-action="supprimer"]').forEach((btn)=>{
+            btn.addEventListener('click', async ()=>{
+                let id = btn.dataset.id;
+                try {
+                    let r = await fetch(API + '/produits/' + id, {
+                        method: 'DELETE',
+                        headers: headersAuth
+                    });
+                    let result = await r.json();
+                    if (result.success) {
+                        chargerProduits();
+                    } else {
                         alert(result.message);
                     }
                 } catch (err) {
@@ -178,10 +198,33 @@ async function chargerCategories() {
         let html = '';
 
         data.data.forEach((c)=>{
-            html += `<p>- ${c.nom}</p>`;
+            html += `<div class="ligneGrille" style="grid-template-columns: 1fr 120px">
+                <span>${c.nom}</span>
+                <span><button class="boutonL btnSupprimerCat" data-id="${c.id}">[ Supprimer ]</button></span>
+            </div>`;
         });
 
         document.getElementById('listeCategories').innerHTML = html || '<p>Aucune catégorie.</p>';
+
+        document.querySelectorAll('.btnSupprimerCat').forEach((btn)=>{
+            btn.addEventListener('click', async ()=>{
+                let id = btn.dataset.id;
+                try {
+                    let r = await fetch(API + '/categories/' + id, {
+                        method: 'DELETE',
+                        headers: headersAuth
+                    });
+                    let result = await r.json();
+                    if (result.success) {
+                        chargerCategories();
+                    } else {
+                        alert(result.message);
+                    }
+                } catch (err) {
+                    alert('Erreur : ' + err.message);
+                }
+            });
+        });
 
     } catch (err) {
 
@@ -233,17 +276,46 @@ async function chargerUtilisateurs() {
         let html = '';
 
         data.data.forEach((u)=>{
-
             let date = new Date(u.date_creation).toLocaleDateString('fr-CA');
-            html += `<div class="ligneGrille">
+            html += `<div class="ligneGrille" style="grid-template-columns: 1fr 1fr 80px 80px 160px">
                 <span>${u.nom}</span>
                 <span>${u.email}</span>
                 <span>${u.role}</span>
                 <span>${date}</span>
+                <span>
+                    <select class="selectRole creneauSelect" data-user-id="${u.id}">
+                        <option value="Client"  ${u.role == 'Client'  ? 'selected' : ''}>Client</option>
+                        <option value="Employe" ${u.role == 'Employe' ? 'selected' : ''}>Employé</option>
+                        <option value="Admin"   ${u.role == 'Admin'   ? 'selected' : ''}>Admin</option>
+                    </select>
+                    <button class="boutonL btnChangerRole" data-user-id="${u.id}">[ OK ]</button>
+                </span>
             </div>`;
-
         });
+
         document.getElementById('listeUtilisateurs').innerHTML = html;
+
+        document.querySelectorAll('.btnChangerRole').forEach((btn)=>{
+            btn.addEventListener('click', async ()=>{
+                let id = btn.dataset.userId;
+                let nouveauRole = document.querySelector(`.selectRole[data-user-id="${id}"]`).value;
+                try {
+                    let r = await fetch(API + '/utilisateurs/' + id + '/role', {
+                        method: 'PATCH',
+                        headers: headersAuth,
+                        body: JSON.stringify({ role: nouveauRole })
+                    });
+                    let result = await r.json();
+                    if (result.success) {
+                        chargerUtilisateurs();
+                    } else {
+                        alert(result.message);
+                    }
+                } catch (err) {
+                    alert('Erreur : ' + err.message);
+                }
+            });
+        });
     } catch (err) {
 
         document.getElementById('listeUtilisateurs').innerHTML =

@@ -81,6 +81,19 @@ exports.connexion = async (req, res) => {
         res.status(500).json({ success: false, message: "Erreur serveur." });
     }
 };
+exports.changerRole = async (req, res) => {
+    const { id } = req.params;
+    const { role } = req.body;
+    if (!role) return res.status(400).json({ success: false, message: 'Rôle requis.' });
+    try {
+        const [resultat] = await db.query('UPDATE Utilisateurs SET role = ? WHERE id = ?', [role, id]);
+        if (resultat.affectedRows === 0) return res.status(404).json({ success: false, message: 'Utilisateur introuvable.' });
+        res.status(200).json({ success: true, message: 'Rôle modifié.' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Erreur serveur.' });
+    }
+};
+
 // 3. Fonction pour récupérer tous les utilisateurs (Pour l'Admin)
 exports.getAllUtilisateurs = async (req, res) => {
     try {

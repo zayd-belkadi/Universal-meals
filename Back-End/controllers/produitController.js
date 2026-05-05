@@ -56,6 +56,17 @@ exports.mettreAJourProduit = async (req, res) => {
     }
 };
 
+exports.supprimerProduit = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const [resultat] = await db.query('DELETE FROM Produits WHERE id = ?', [id]);
+        if (resultat.affectedRows === 0) return res.status(404).json({ success: false, message: 'Produit introuvable.' });
+        res.status(200).json({ success: true, message: 'Produit supprimé.' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Impossible de supprimer : ce produit est lié à des commandes.' });
+    }
+};
+
 // 4. Fonction pour activer/désactiver rapidement un plat
 exports.changerDisponibilite = async (req, res) => {
     const { id } = req.params;

@@ -9,4 +9,6 @@ router.get('/', categorieController.getAllCategories);
 // Seul l'Admin peut créer une catégorie
 router.post('/', auth.verifierToken, auth.estAdmin, categorieController.creerCategorie);
 
+router.delete('/:id', auth.verifierToken, auth.estAdmin, categorieController.supprimerCategorie);
+
 module.exports = router;

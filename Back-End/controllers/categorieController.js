@@ -20,3 +20,14 @@ exports.creerCategorie = async (req, res) => {
         res.status(500).json({ success: false, message: "Erreur serveur." });
     }
 };
+
+exports.supprimerCategorie = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const [resultat] = await db.query('DELETE FROM Categories WHERE id = ?', [id]);
+        if (resultat.affectedRows === 0) return res.status(404).json({ success: false, message: 'Catégorie introuvable.' });
+        res.status(200).json({ success: true, message: 'Catégorie supprimée.' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Impossible de supprimer : cette catégorie contient des produits.' });
+    }
+};

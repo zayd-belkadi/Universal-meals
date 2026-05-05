@@ -68,26 +68,26 @@ exports.getToutesLesCommandes = async (req, res) => {
         res.status(500).json({ success: false, message: "Erreur serveur." });
     }
 };
-// 3. Fonction pour mettre à jour le statut d'une commande (Cuisine)
+// mettre à jour le statut d'une commande (Cuisine)
 exports.mettreAJourStatut = async (req, res) => {
-    // On récupère l'ID de la commande dans l'URL (ex: /api/commandes/1/statut)
+    //récupèration d'ID 
     const { id } = req.params; 
-    // On récupère le nouveau statut envoyé dans le corps de la requête
+    //récuppératio,n de status
     const { statut } = req.body;
 
-    // Vérification de sécurité : on s'assure qu'un statut a bien été envoyé
+    // Vérification de statut avoué 
     if (!statut) {
         return res.status(400).json({ success: false, message: "Le nouveau statut est requis." });
     }
 
     try {
-        // Mise à jour dans la base de données
+        // Mise à jour db
         const [resultat] = await db.query(
             'UPDATE Commandes SET statut = ? WHERE id = ?',
             [statut, id]
         );
 
-        // Si aucune ligne n'a été modifiée, c'est que l'ID n'existe pas
+        // aucune ligne modofié = ID n'existe pas
         if (resultat.affectedRows === 0) {
             return res.status(404).json({ success: false, message: "Commande introuvable." });
         }
@@ -102,7 +102,7 @@ exports.mettreAJourStatut = async (req, res) => {
         res.status(500).json({ success: false, message: "Erreur serveur." });
     }
 };
-// 4. Fonction pour récupérer l'historique d'un client spécifique
+// récupérer l'historique d'un client
 exports.getCommandesUtilisateur = async (req, res) => {
     // On récupère l'ID de l'utilisateur passé dans l'URL
     const { utilisateur_id } = req.params;
@@ -187,9 +187,9 @@ exports.getVentes = async (req, res) => {
     }
 };
 
-// 5. Fonction pour annuler/supprimer une commande
+// annuler ou supprimer une commande
 exports.supprimerCommande = async (req, res) => {
-    // On récupère l'ID de la commande à supprimer
+    
     const { id } = req.params;
 
     // On démarre une transaction sécurisée
@@ -197,19 +197,19 @@ exports.supprimerCommande = async (req, res) => {
     await connection.beginTransaction();
 
     try {
-        // Étape A : Supprimer d'abord le contenu du panier (Lignes_Commande)
+        // Supprimer le contenu du panier
         await connection.query('DELETE FROM Lignes_Commande WHERE commande_id = ?', [id]);
 
-        // Étape B : Supprimer ensuite la commande principale
+        // Supprimer la commande principale
         const [resultat] = await connection.query('DELETE FROM Commandes WHERE id = ?', [id]);
 
-        // Si aucune ligne n'a été touchée, c'est que l'ID n'existait pas
+        
         if (resultat.affectedRows === 0) {
-            await connection.rollback(); // On annule tout
+            await connection.rollback(); // annuler tout
             return res.status(404).json({ success: false, message: "Commande introuvable." });
         }
 
-        // Si tout s'est bien passé, on valide la suppression !
+        // valider la suppression !
         await connection.commit();
         res.status(200).json({ 
             success: true, 
@@ -217,12 +217,12 @@ exports.supprimerCommande = async (req, res) => {
         });
 
     } catch (error) {
-        // En cas de problème, on annule l'opération pour ne rien casser
+        // annuler l'opération (cas d'un prob)
         await connection.rollback();
         console.error("Erreur lors de la suppression :", error.message);
         res.status(500).json({ success: false, message: "Erreur serveur lors de l'annulation." });
     } finally {
-        // On libère la connexion
+    
         connection.release();
     }
 };

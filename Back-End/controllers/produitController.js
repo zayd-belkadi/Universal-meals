@@ -1,6 +1,6 @@
 const db = require('../config/db'); // Retour en arrière d'un dossier (..) puis config
 
-// Récupérer tous les produits
+// Récupération des produits
 exports.getAllProduits = async (req, res) => {
     try {
         const [produits] = await db.query('SELECT * FROM Produits');
@@ -10,7 +10,7 @@ exports.getAllProduits = async (req, res) => {
         res.status(500).json({ success: false, message: "Erreur serveur." });
     }
 };
-// Fonction pour ajouter un nouveau plat (Mise à jour avec image_url et categorie_id)
+// ajouter nouveau un nouveau
 exports.creerProduit = async (req, res) => {
     const { nom, description, prix, est_disponible, image_url, categorie_id } = req.body;
 
@@ -38,7 +38,7 @@ exports.creerProduit = async (req, res) => {
     }
 };
 
-// Fonction pour modifier toutes les infos d'un plats
+// modifier les infos d'un plats
 exports.mettreAJourProduit = async (req, res) => {
     const { id } = req.params;
     const { nom, description, prix, image_url, categorie_id } = req.body;
@@ -67,12 +67,12 @@ exports.supprimerProduit = async (req, res) => {
     }
 };
 
-// 4. Fonction pour activer/désactiver rapidement un plat
+// activer/désactiver un plat
 exports.changerDisponibilite = async (req, res) => {
     const { id } = req.params;
     const { est_disponible } = req.body;
 
-    // On vérifie que la valeur est bien envoyée (true ou false)
+    //vérification
     if (est_disponible === undefined) {
         return res.status(400).json({ success: false, message: "Le champ 'est_disponible' est requis." });
     }
@@ -87,7 +87,7 @@ exports.changerDisponibilite = async (req, res) => {
             return res.status(404).json({ success: false, message: "Produit introuvable." });
         }
 
-        // Petit texte sympa pour dire si c'est activé ou désactivé
+        // commentaire activé/désactivé
         const statut = est_disponible ? "disponible" : "en rupture de stock";
         res.status(200).json({ success: true, message: `Le plat est maintenant ${statut} !` });
 

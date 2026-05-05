@@ -53,6 +53,7 @@ function itemWrite(categorieId) {
 
 async function chargerMenu() {
     try {
+
         const reponseCat = await fetch(API + '/categories');
         const dataCat = await reponseCat.json();
 
@@ -62,12 +63,15 @@ async function chargerMenu() {
         if (!dataCat.success || !dataProd.success) {
             document.querySelector('.categoryHolder').innerHTML = '<p>Erreur de chargement.</p>';
             return;
+
+
         }
 
         produitsBackend = dataProd.data;
         const categories = dataCat.data;
 
         categories.forEach((cat) => {
+
             let categoryForm = `
             <div class="Category">
                 <p class="categoryName">**${cat.nom.toUpperCase()}**</p>
@@ -76,15 +80,18 @@ async function chargerMenu() {
                 </div>
             </div>`;
 
+
             menuProduit += categoryForm;
             menuCategoryItem = '';
         });
+
 
         document.querySelector('.categoryHolder').innerHTML = menuProduit;
 
         ajouterEvenementsBoutons();
 
     } catch (erreur) {
+
         document.querySelector('.categoryHolder').innerHTML =
             '<p style="color:red;">Erreur serveur : ' + erreur.message + '</p>';
     }
@@ -94,6 +101,7 @@ function ajouterEvenementsBoutons() {
     document.querySelectorAll('.add').forEach((btn) => {
         btn.addEventListener('click', () => {
 
+
             let id = Number(btn.dataset.produitId);
             let quantite = Number(document.querySelector(".optionValeur" + id).value);
 
@@ -102,16 +110,19 @@ function ajouterEvenementsBoutons() {
             let select = document.querySelector(".optionValeur" + id);
             select.value = "1";
 
+
             if (existItem) {
                 existItem.quantite += quantite;
             } else {
                 let produit = produitsBackend.find(p => p.id == id);
                 if (produit) {
+
                     panierItems.push({
                         id: produit.id,
                         name: produit.nom,
                         prix: Number(produit.prix),
                         quantite: quantite,
+
                     });
                 }
             }
@@ -130,6 +141,7 @@ let mois = ['jan', 'fév', 'mar', 'avr', 'mai', 'jun', 'jul', 'aoû', 'sep', 'oc
 
 for (let i = 0; i < 7; i++) {
 
+
     let d = new Date();
     d.setDate(d.getDate() + i);
 
@@ -137,14 +149,19 @@ for (let i = 0; i < 7; i++) {
     opt.value = d.toISOString().split('T')[0];
 
     if (i == 0) {
+
         opt.textContent = "Aujourd'hui";
     } else {
+
         opt.textContent = jours[d.getDay()] + ' ' + d.getDate() + ' ' + mois[d.getMonth()];
     }
 
     selectJour.appendChild(opt);
 
+
+
 }
+
 
 const selectCreneau = document.getElementById('selectCreneau');
 selectCreneau.innerHTML = `
@@ -170,12 +187,15 @@ document.getElementById('btnMesCommandes').addEventListener('click', () => {
 
 let commandeEnAttente = null;
 
+
 document.getElementById('btnCommander').addEventListener('click', ()=>{
 
     if (panierItems.length === 0) {
         alert('Votre panier est vide !');
         return;
     }
+
+
 
     let utilisateur = JSON.parse(localStorage.getItem('utilisateur'));
     if (!utilisateur) {
@@ -184,18 +204,23 @@ document.getElementById('btnCommander').addEventListener('click', ()=>{
         return;
     }
 
+    
     let jour = selectJour.value;
     let creneau = selectCreneau.value;
+
     if (!creneau) {
         alert('Veuillez choisir un créneau !');
         return;
     }
+
 
     commandeEnAttente = {
         utilisateur_id: utilisateur.id,
         panier: panierItems.map(item => ({ produit_id: item.id, quantite: item.quantite })),
         creneau_retrait: jour + ' ' + creneau
     };
+
+
 
     let sousTotal = 0;
     panierItems.forEach((item)=>{ sousTotal += item.prix * item.quantite; });
@@ -207,6 +232,7 @@ document.getElementById('btnCommander').addEventListener('click', ()=>{
         lignes += `<p>${item.name} x${item.quantite} — ${(item.prix * item.quantite).toFixed(2)}$</p>`;
     });
 
+
     document.getElementById('resumePaiement').innerHTML = `
         ${lignes}
         <p style="margin-top:10px">Sous-total : ${sousTotal.toFixed(2)}$</p>
@@ -215,41 +241,56 @@ document.getElementById('btnCommander').addEventListener('click', ()=>{
         <p style="margin-top:10px;color:rgb(160,160,160)">Créneau : ${jour + ' ' + creneau}</p>
     `;
 
+
     document.getElementById('modalPaiement').style.display = 'flex';
+
 });
+
 
 document.getElementById('numeroCb').addEventListener('input', (e) => {
     let chiffres = e.target.value.replace(/\D/g, '');
     chiffres = chiffres.substring(0, 16);
     let resultat = '';
     for (let i = 0; i < chiffres.length; i++) {
+
         if (i > 0 && i % 4 === 0) resultat += ' ';
         resultat += chiffres[i];
     }
+
     e.target.value = resultat;
 });
+
 
 document.getElementById('dateExpCb').addEventListener('input', (e) => {
     let chiffres = e.target.value.replace(/\D/g, '');
     chiffres = chiffres.substring(0, 4);
     if (chiffres.length > 2) {
+
         e.target.value = chiffres.substring(0, 2) + '/' + chiffres.substring(2);
     } else {
+
         e.target.value = chiffres;
     }
 });
 
 document.getElementById('codeCvv').addEventListener('input', (e) => {
+
     let chiffres = e.target.value.replace(/\D/g, '');
     e.target.value = chiffres.substring(0, 3);
 });
+
+
 
 const regexNom    = /^[A-Za-zÀ-ÿ\s\-']{2,50}$/;
 const regexCarte  = /^\d{4} \d{4} \d{4} \d{4}$/;
 const regexDate   = /^(0[1-9]|1[0-2])\/\d{2}$/;
 const regexCvv    = /^\d{3}$/;
 
+
+
+
 document.getElementById('btnAnnulerPaiement').addEventListener('click', ()=>{
+
     commandeEnAttente = null;
     document.getElementById('nomTitulaire').value = '';
     document.getElementById('numeroCb').value = '';
@@ -259,12 +300,14 @@ document.getElementById('btnAnnulerPaiement').addEventListener('click', ()=>{
     document.getElementById('numeroCb').classList.remove('inputError');
     document.getElementById('dateExpCb').classList.remove('inputError');
     document.getElementById('codeCvv').classList.remove('inputError');
+
     document.getElementById('errNom').textContent = '';
     document.getElementById('errNumero').textContent = '';
     document.getElementById('errDate').textContent = '';
     document.getElementById('errCode').textContent = '';
     document.getElementById('modalPaiement').style.display = 'none';
 });
+
 
 document.getElementById('btnConfirmerPaiement').addEventListener('click', async ()=>{
     if (!commandeEnAttente) return;
@@ -278,6 +321,9 @@ document.getElementById('btnConfirmerPaiement').addEventListener('click', async 
     document.getElementById('numeroCb').classList.remove('inputError');
     document.getElementById('dateExpCb').classList.remove('inputError');
     document.getElementById('codeCvv').classList.remove('inputError');
+
+
+
     document.getElementById('errNom').textContent = '';
     document.getElementById('errNumero').textContent = '';
     document.getElementById('errDate').textContent = '';
@@ -286,45 +332,62 @@ document.getElementById('btnConfirmerPaiement').addEventListener('click', async 
     let valide = true;
 
     if (!regexNom.test(nom)) {
+
         document.getElementById('nomTitulaire').classList.add('inputError');
         document.getElementById('errNom').textContent = 'Nom invalide (lettres et espaces uniquement)';
         valide = false;
+
     }
 
     if (!regexCarte.test(numeroCarte)) {
+
         document.getElementById('numeroCb').classList.add('inputError');
         document.getElementById('errNumero').textContent = 'Numéro invalide (format : 0000 0000 0000 0000)';
         valide = false;
+
     }
 
     if (!regexDate.test(dateExp)) {
+
         document.getElementById('dateExpCb').classList.add('inputError');
         document.getElementById('errDate').textContent = 'Date invalide (format : MM/AA)';
         valide = false;
+
+
     } else {
+
         let parties     = dateExp.split('/');
         let mois        = parseInt(parties[0]);
         let annee       = parseInt(parties[1]);
         let dateExpiration = new Date(2000 + annee, mois - 1, 1);
         let aujourdhui  = new Date();
+
+
         aujourdhui.setDate(1);
         aujourdhui.setHours(0, 0, 0, 0);
         if (dateExpiration < aujourdhui) {
+
             document.getElementById('dateExpCb').classList.add('inputError'); 
             document.getElementById('errDate').textContent = 'Carte expirée';
+            
             valide = false;
         }
+
     }
 
     if (!regexCvv.test(cvv)) {
+
         document.getElementById('codeCvv').classList.add('inputError');
         document.getElementById('errCode').textContent = 'CVV invalide (3 ou 4 chiffres)';
+
         valide = false;
+
     }
 
     if (!valide) return;
 
     try {
+
         let reponse = await fetch(API + '/commandes/creer', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -334,22 +397,30 @@ document.getElementById('btnConfirmerPaiement').addEventListener('click', async 
         let data = await reponse.json();
 
         if (data.success) {
+
             document.getElementById('modalPaiement').style.display = 'none';
             commandeEnAttente = null;
+
             document.getElementById('nomTitulaire').value = '';
             document.getElementById('numeroCb').value = '';
             document.getElementById('dateExpCb').value = '';
             document.getElementById('codeCvv').value = '';
+
             panierItems.length = 0;
+
             updatePanier();
             panierVide();
             calculeFrais();
+
             alert('Commande #' + data.commandeId + ' validée !');
+
         } else {
+
             alert('Erreur : ' + data.message);
         }
 
     } catch (erreur) {
+        
         alert('Erreur serveur : ' + erreur.message);
     }
 });

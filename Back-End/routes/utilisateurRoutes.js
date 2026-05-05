@@ -3,10 +3,10 @@ const router = express.Router();
 const utilisateurController = require('../controllers/utilisateurController');
 const auth = require('../middlewares/authMiddleware');
 
-// Route pour l'inscription (POST /api/utilisateurs/inscription)
+//l'inscription
 router.post('/inscription', utilisateurController.inscription);
 
-// Route pour la connexion (POST /api/utilisateurs/connexion)
+//connexion
 router.post('/connexion', utilisateurController.connexion);
 
 //
